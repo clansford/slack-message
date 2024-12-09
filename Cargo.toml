@@ -3,4 +3,49 @@ name = "slack-message"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+opt-level = 3
+strip = true
+codegen-units = 1
+lto = true
+debug = 0
+
 [dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+dotenv = "0.15.0"
+reqwest = { version = "0.12.9", features = ["json"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
+tokio = { version = "1.42.0", features = ["full"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+cloned_instead_of_copied = "warn"
+empty_enum_variants_with_brackets = "warn"
+equatable_if_let = "warn"
+if_not_else = "warn"
+implicit_clone = "warn"
+inefficient_to_string = "warn"
+infinite_loop = "warn"
+manual_assert = "warn"
+manual_string_new = "warn"
+manual_let_else = "warn"
+match_bool = "warn"
+needless_bitwise_bool = "warn"
+needless_borrow = "warn"
+needless_collect = "warn"
+needless_continue = "warn"
+needless_for_each = "warn"
+needless_pass_by_ref_mut = "warn"
+needless_pass_by_value = "warn"
+needless_raw_strings = "warn"
+needless_raw_string_hashes = "warn"
+redundant_clone = "warn"
+redundant_closure_for_method_calls = "warn"
+redundant_else = "warn"
+redundant_pub_crate = "warn"
+redundant_type_annotations = "warn"
+semicolon_if_nothing_returned = "warn"
+useless_let_if_seq = "warn"
