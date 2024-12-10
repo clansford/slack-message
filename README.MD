@@ -11,7 +11,7 @@ Send a slack message from command line.
 ### .env
 ```
 SLACK_TOKEN=xoxb-...
-SLACK_CHANNEL=<CHANNELID>
+SLACK_CHANNEL=<CHANNELID | CHANNEL_NAME>
 ```
 
 ## TODOS
