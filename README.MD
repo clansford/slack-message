@@ -6,7 +6,15 @@ Send a slack message from command line.
 - Will check environment variables if they are not passed to  the command as flags.
 - SLACK_TOKEN is the slack app's oauth token
 - SLACK_CHANNEL is the slack channel id to send the message in.
+2. Run `just install`
+
+### .env
+```
+SLACK_TOKEN=xoxb-...
+SLACK_CHANNEL=<CHANNELID>
+```
 
 ## TODOS
 - cleanup.
 - analyze panics / better error messages if necessary to panic.
+- tests
