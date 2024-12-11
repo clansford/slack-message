@@ -1,6 +1,11 @@
 # Slack-Message
 Send a slack message from command line.
 
+### External requirements
+- Slack app and bot token.
+- rust to build/install it.
+- [Just](https://github.com/casey/just) (optional)
+
 ## Build, Test, Install
 - Integration tests are ignored because they utilize an actual slack workspace.
 #### With [Just](https://github.com/casey/just)
@@ -32,6 +37,5 @@ SLACK_CHANNEL=<CHANNELID | CHANNEL_NAME>
 ```
 
 ## TODOS
-- cleanup.
-- analyze panics / better error messages if necessary to panic.
 - tests
+- add name flag to change name of bot app.

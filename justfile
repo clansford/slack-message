@@ -27,7 +27,7 @@ test_integration release=release: (build release)
         cargo test --workspace -- --include-ignored ;
     fi
 
-install: (test release)
+install: (test_integration release)
     cargo install --path .
 
 clean:
