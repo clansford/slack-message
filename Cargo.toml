@@ -49,3 +49,6 @@ redundant_pub_crate = "warn"
 redundant_type_annotations = "warn"
 semicolon_if_nothing_returned = "warn"
 useless_let_if_seq = "warn"
+
+[dev-dependencies]
+serial_test = "3.2.0"
