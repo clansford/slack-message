@@ -1,10 +1,19 @@
+pub mod response;
+
 use core::panic;
 use reqwest::header;
-use reqwest::{Client as HttpClient, RequestBuilder};
+use reqwest::{Client as HttpClient, Request};
+use response::Response;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct Message {
+  pub channel: String,
+  pub text: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd)]
 pub struct Client<'a> {
   bearer_token: String,
   url: &'a str,
@@ -20,24 +29,29 @@ impl Client<'_> {
   pub async fn send_message(
     &self, message: &Message,
   ) -> Result<Response, Box<dyn Error>> {
-    let req = self.build_request(message);
-    send_request(req).await
+    let req = self.build_request(message)?;
+    let http = reqwest::Client::new();
+    let res = http.execute(req).await?;
+    let body = res.text().await?;
+    match Response::parse(&body) {
+      Ok(r) => Ok(r),
+      Err(e) => {
+        return Err(e.into());
+      }
+    }
   }
 
-  fn build_request(&self, message: &Message) -> RequestBuilder {
+  fn build_request(
+    &self, message: &Message,
+  ) -> Result<Request, reqwest::Error> {
     let body = create_request_body(message);
     HttpClient::new()
       .post(self.url)
       .header(header::AUTHORIZATION, self.bearer_token.clone())
       .header(header::CONTENT_TYPE, "application/json; charset=utf-8")
       .json(&body)
+      .build()
   }
-}
-
-async fn send_request(r: RequestBuilder) -> Result<Response, Box<dyn Error>> {
-  let res = r.send().await?;
-  let res_body = res.text().await?;
-  Response::parse(&res_body)
 }
 
 fn create_request_body(slack_message: &Message) -> serde_json::Value {
@@ -51,40 +65,75 @@ fn create_request_body(slack_message: &Message) -> serde_json::Value {
   }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Message {
-  pub channel: String,
-  pub text: String,
-}
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use core::str;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Response {
-  pub ok: bool,
-  pub channel: String,
-  pub ts: String,
-  pub message: ResponseMessage,
-}
-
-impl Response {
-  fn parse(s: &str) -> Result<Self, Box<dyn Error>> {
-    match serde_json::from_str::<Response>(s) {
-      Ok(res) => Ok(res),
-      Err(e) => {
-        eprintln!("Error parsing SlackResponse\n{e:?}");
-        Err(e.into())
-      }
-    }
+  #[test]
+  fn new() -> Result<(), Box<dyn Error>> {
+    let auth_tok = "testToken";
+    let actual = Client::new(auth_tok);
+    let expected = Client {
+      url: "https://slack.com/api/chat.postMessage",
+      bearer_token: format!("Bearer {auth_tok}"),
+    };
+    assert_eq!(
+      expected, actual,
+      "\n  expected: {expected:#?}\n  actual: {actual:#?}"
+    );
+    Ok(())
   }
-}
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ResponseMessage {
-  pub user: String,
-  #[serde(rename = "type")]
-  pub _type: String,
-  pub ts: String,
-  pub bot_id: String,
-  pub app_id: String,
-  pub text: String,
-  pub team: String,
+  #[test]
+  fn build_request_method() -> Result<(), Box<dyn Error>> {
+    let client = Client::new("testToken");
+    let msg = Message {
+      channel: String::from("testChannel"),
+      text: String::from("testMessageText"),
+    };
+    let actual = client.build_request(&msg)?;
+    assert_eq!(reqwest::Method::POST, actual.method());
+    Ok(())
+  }
+
+  #[test]
+  fn build_request_headers() -> Result<(), Box<dyn Error>> {
+    let tok = "testToken";
+    let client = Client::new(tok);
+    let msg = Message {
+      channel: String::from("testChannel"),
+      text: String::from("testMessageText"),
+    };
+    let req = client.build_request(&msg)?;
+    let headers = req.headers();
+    let auth_header = "authorization";
+    let content_header = "content-type";
+    assert!(headers.contains_key(auth_header));
+    assert!(headers.contains_key(content_header));
+    assert_eq!(
+      &format!("Bearer {tok}"),
+      headers.get(auth_header).unwrap().to_str()?
+    );
+    assert_eq!(
+      "application/json; charset=utf-8",
+      headers.get(content_header).unwrap().to_str()?
+    );
+    Ok(())
+  }
+
+  #[test]
+  fn build_request_body() -> Result<(), Box<dyn Error>> {
+    let client = Client::new("testToken");
+    let msg = Message {
+      channel: String::from("testChannel"),
+      text: String::from("testMessageText"),
+    };
+    let req = client.build_request(&msg)?;
+    let body = req.body().unwrap().as_bytes().unwrap();
+    let actual = str::from_utf8(body)?;
+    let expected = r#"{"channel":"testChannel","text":"testMessageText"}"#;
+    assert_eq!(expected, actual);
+    Ok(())
+  }
 }
