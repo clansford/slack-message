@@ -51,4 +51,5 @@ semicolon_if_nothing_returned = "warn"
 useless_let_if_seq = "warn"
 
 [dev-dependencies]
+assert_cmd = "2.0.16"
 serial_test = "3.2.0"

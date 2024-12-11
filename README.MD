@@ -1,6 +1,23 @@
 # Slack-Message
 Send a slack message from command line.
 
+## Build, Test, Install
+- Integration tests are ignored because they utilize an actual slack workspace.
+#### With [Just](https://github.com/casey/just)
+```shell
+just build
+just test
+just test_integration
+just install
+```
+#### Without [Just](https://github.com/casey/just)
+```shell
+cargo build --workspace
+cargo test --workspace
+cargo test --workspace -- --include-ignored
+cargo install --path .
+```
+
 ## Setup (optional)
 1. Create environment variable 'SLACK_TOKEN' and 'SLACK_CHANNEL'
 - Will check environment variables if they are not passed to  the command as flags.

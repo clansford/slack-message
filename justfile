@@ -19,6 +19,14 @@ test release=release: (build release)
         cargo test --workspace;
     fi
 
+test_integration release=release: (build release)
+    #!/usr/bin/env bash
+    if [[ {{release}} == "release" ]]; then
+        cargo test --workspace --release -- --include-ignored ;
+    else
+        cargo test --workspace -- --include-ignored ;
+    fi
+
 install: (test release)
     cargo install --path .
 
