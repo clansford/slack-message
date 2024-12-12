@@ -17,6 +17,16 @@ mod tests {
 
   #[test]
   #[ignore]
+  fn send_message_name() {
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+    let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let msg = format!("integration test message {now:?}");
+    let assert = cmd.arg(msg).arg("--username").arg("TEST-NAME").assert();
+    assert.success().stdout("Message sent successfully\n");
+  }
+
+  #[test]
+  #[ignore]
   fn no_message_provided() {
     let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
     let assert = cmd.assert();

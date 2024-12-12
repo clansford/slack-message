@@ -22,12 +22,12 @@ impl Response {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
-  pub user: String,
+  pub user: Option<String>,
   #[serde(rename = "type")]
   pub _type: String,
   pub ts: String,
   pub bot_id: String,
   pub app_id: String,
   pub text: String,
-  pub team: String,
+  pub team: Option<String>,
 }

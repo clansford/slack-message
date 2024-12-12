@@ -11,6 +11,7 @@ use std::error::Error;
 pub struct Message {
   pub channel: String,
   pub text: String,
+  pub username: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd)]
@@ -69,6 +70,8 @@ fn create_request_body(slack_message: &Message) -> serde_json::Value {
 mod tests {
   use super::*;
   use core::str;
+  use dotenv::dotenv;
+  use std::env;
 
   #[test]
   fn new() -> Result<(), Box<dyn Error>> {
@@ -91,6 +94,7 @@ mod tests {
     let msg = Message {
       channel: String::from("testChannel"),
       text: String::from("testMessageText"),
+      username: None,
     };
     let actual = client.build_request(&msg)?;
     assert_eq!(reqwest::Method::POST, actual.method());
@@ -104,6 +108,7 @@ mod tests {
     let msg = Message {
       channel: String::from("testChannel"),
       text: String::from("testMessageText"),
+      username: None,
     };
     let req = client.build_request(&msg)?;
     let headers = req.headers();
@@ -128,12 +133,30 @@ mod tests {
     let msg = Message {
       channel: String::from("testChannel"),
       text: String::from("testMessageText"),
+      username: Some(String::from("testName")),
     };
     let req = client.build_request(&msg)?;
     let body = req.body().unwrap().as_bytes().unwrap();
     let actual = str::from_utf8(body)?;
-    let expected = r#"{"channel":"testChannel","text":"testMessageText"}"#;
-    assert_eq!(expected, actual);
+    let expected =
+      r#"{"channel":"testChannel","text":"testMessageText","username":"testName"}"#;
+    assert_eq!(expected, actual, "\nexpected: {expected}\nactual:{actual}");
+    Ok(())
+  }
+
+  #[tokio::test]
+  #[ignore = "Actually sends slack message"]
+  async fn send_message() -> Result<(), Box<dyn Error>> {
+    dotenv().ok();
+    let tok = env::var("SLACK_TOKEN")?;
+    let channel = env::var("SLACK_CHANNEL")?;
+    let slack = Client::new(&tok);
+    let msg = Message {
+      channel,
+      text: String::from("testMessageText"),
+      username: Some(String::from("TEST-NAME")),
+    };
+    slack.send_message(&msg).await?;
     Ok(())
   }
 }
