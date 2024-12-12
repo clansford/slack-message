@@ -7,9 +7,10 @@ use response::Response;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Message {
   pub channel: String,
+  pub icon_emoji: Option<String>,
   pub text: String,
   pub username: Option<String>,
 }
@@ -30,16 +31,11 @@ impl Client<'_> {
   pub async fn send_message(
     &self, message: &Message,
   ) -> Result<Response, Box<dyn Error>> {
-    let req = self.build_request(message)?;
+    let request = self.build_request(message)?;
     let http = reqwest::Client::new();
-    let res = http.execute(req).await?;
-    let body = res.text().await?;
-    match Response::parse(&body) {
-      Ok(r) => Ok(r),
-      Err(e) => {
-        return Err(e.into());
-      }
-    }
+    let response = http.execute(request).await?;
+    let body = response.text().await?;
+    Ok(Response::parse(&body)?)
   }
 
   fn build_request(
@@ -93,6 +89,7 @@ mod tests {
     let client = Client::new("testToken");
     let msg = Message {
       channel: String::from("testChannel"),
+      icon_emoji: None,
       text: String::from("testMessageText"),
       username: None,
     };
@@ -107,6 +104,7 @@ mod tests {
     let client = Client::new(tok);
     let msg = Message {
       channel: String::from("testChannel"),
+      icon_emoji: None,
       text: String::from("testMessageText"),
       username: None,
     };
@@ -132,14 +130,14 @@ mod tests {
     let client = Client::new("testToken");
     let msg = Message {
       channel: String::from("testChannel"),
+      icon_emoji: Some(String::from(":test:")),
       text: String::from("testMessageText"),
       username: Some(String::from("testName")),
     };
     let req = client.build_request(&msg)?;
     let body = req.body().unwrap().as_bytes().unwrap();
     let actual = str::from_utf8(body)?;
-    let expected =
-      r#"{"channel":"testChannel","text":"testMessageText","username":"testName"}"#;
+    let expected = r#"{"channel":"testChannel","icon_emoji":":test:","text":"testMessageText","username":"testName"}"#;
     assert_eq!(expected, actual, "\nexpected: {expected}\nactual:{actual}");
     Ok(())
   }
@@ -153,6 +151,7 @@ mod tests {
     let slack = Client::new(&tok);
     let msg = Message {
       channel,
+      icon_emoji: Some(String::from(":test:")),
       text: String::from("testMessageText"),
       username: Some(String::from("TEST-NAME")),
     };

@@ -2,14 +2,16 @@ use clap::Parser;
 use env::VarError;
 use std::env;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Default)]
 pub struct Cli {
   #[arg(short, long)]
+  auth_token: Option<String>,
+  #[arg(short, long)]
   pub channel: Option<String>,
+  #[arg(short, long)]
+  pub icon: Option<String>,
   pub message: String,
   #[arg(short, long)]
-  auth_token: Option<String>,
-  #[arg(long)]
   pub username: Option<String>,
 }
 
@@ -47,12 +49,7 @@ mod tests {
   #[test]
   fn get_oauth_token_arg() -> Result<(), Box<dyn Error>> {
     let expected = String::from("testArgToken");
-    let cli = Cli {
-      channel: None,
-      message: String::new(),
-      auth_token: Some(expected.clone()),
-      username: None,
-    };
+    let cli = Cli { auth_token: Some(expected.clone()), ..Default::default() };
     let actual = cli.get_oauth_token()?;
     assert_eq!(
       expected, actual,
@@ -64,12 +61,7 @@ mod tests {
   #[test]
   #[serial]
   fn get_oauth_token_env() -> Result<(), Box<dyn Error>> {
-    let cli = Cli {
-      channel: None,
-      message: String::new(),
-      auth_token: None,
-      username: None,
-    };
+    let cli = Cli { ..Default::default() };
     let slack_token = "SLACK_TOKEN";
     let expected = String::from("testEnvToken");
     env::set_var(slack_token, expected.clone());
@@ -85,12 +77,7 @@ mod tests {
   #[test]
   #[serial]
   fn get_oauth_token_fail() -> Result<(), Box<dyn Error>> {
-    let cli = Cli {
-      channel: None,
-      message: String::new(),
-      auth_token: None,
-      username: None,
-    };
+    let cli = Cli { ..Default::default() };
     let actual = match cli.get_oauth_token() {
       Ok(_) => {
         eprintln!(
@@ -111,12 +98,7 @@ mod tests {
   #[test]
   fn get_channel_arg() -> Result<(), Box<dyn Error>> {
     let expected = String::from("testArgChannel");
-    let cli = Cli {
-      channel: Some(expected.clone()),
-      message: String::new(),
-      auth_token: None,
-      username: None,
-    };
+    let cli = Cli { channel: Some(expected.clone()), ..Default::default() };
     let actual = cli.get_channel()?;
     assert_eq!(
       expected, actual,
@@ -128,12 +110,7 @@ mod tests {
   #[test]
   #[serial]
   fn get_channel_env() -> Result<(), Box<dyn Error>> {
-    let cli = Cli {
-      channel: None,
-      message: String::new(),
-      auth_token: None,
-      username: None,
-    };
+    let cli = Cli { ..Default::default() };
     let slack_channel = "SLACK_CHANNEL";
     let expected = String::from("testEnvChannel");
     env::set_var(slack_channel, expected.clone());
@@ -149,12 +126,7 @@ mod tests {
   #[test]
   #[serial]
   fn get_channel_fail() -> Result<(), Box<dyn Error>> {
-    let cli = Cli {
-      channel: None,
-      message: String::new(),
-      auth_token: None,
-      username: None,
-    };
+    let cli = Cli { ..Default::default() };
     let actual = match cli.get_channel() {
       Ok(_) => {
         unreachable!(
