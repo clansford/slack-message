@@ -17,22 +17,24 @@ pub struct Cli {
 
 impl Cli {
   pub fn get_channel(&self) -> Result<String, VarError> {
-    find_arg_or_env(self.channel.as_ref(), "SLACK_CHANNEL")
+    find_arg_or_env(self.channel.as_ref(), "SLACK_MESSAGE_CHANNEL")
   }
 
   pub fn get_oauth_token(&self) -> Result<String, VarError> {
-    find_arg_or_env(self.auth_token.as_ref(), "SLACK_TOKEN")
+    find_arg_or_env(self.auth_token.as_ref(), "SLACK_MESSAGE_TOKEN")
   }
 }
 
+/// search precedence: provided arg, env var, config.toml
 fn find_arg_or_env(
   arg: Option<&String>, env_var: &str,
 ) -> Result<String, VarError> {
   if let Some(val) = arg {
     return Ok(val.to_string());
   }
+
   match env::var(env_var) {
-    Ok(tok) => Ok(tok),
+    Ok(val) => Ok(val),
     Err(e) => {
       eprintln!("Couldn't find {env_var}\n{e:?}");
       Err(e)
@@ -62,7 +64,7 @@ mod tests {
   #[serial]
   fn get_oauth_token_env() -> Result<(), Box<dyn Error>> {
     let cli = Cli { ..Default::default() };
-    let slack_token = "SLACK_TOKEN";
+    let slack_token = "SLACK_MESSAGE_TOKEN";
     let expected = String::from("testEnvToken");
     env::set_var(slack_token, expected.clone());
     let actual = cli.get_oauth_token()?;
@@ -111,7 +113,7 @@ mod tests {
   #[serial]
   fn get_channel_env() -> Result<(), Box<dyn Error>> {
     let cli = Cli { ..Default::default() };
-    let slack_channel = "SLACK_CHANNEL";
+    let slack_channel = "SLACK_MESSAGE_CHANNEL";
     let expected = String::from("testEnvChannel");
     env::set_var(slack_channel, expected.clone());
     let actual = cli.get_channel()?;

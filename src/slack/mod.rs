@@ -146,8 +146,8 @@ mod tests {
   #[ignore = "Actually sends slack message"]
   async fn send_message() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
-    let tok = env::var("SLACK_TOKEN")?;
-    let channel = env::var("SLACK_CHANNEL")?;
+    let tok = env::var("SLACK_MESSAGE_TOKEN")?;
+    let channel = env::var("SLACK_MESSAGE_CHANNEL")?;
     let slack = Client::new(&tok);
     let msg = Message {
       channel,

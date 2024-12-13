@@ -24,16 +24,16 @@ cargo install --path .
 ```
 
 ## Setup (optional)
-1. Create environment variable 'SLACK_TOKEN' and 'SLACK_CHANNEL'
+1. Create environment variable 'SLACK_MESSAGE_TOKEN' and 'SLACK_MESSAGE_CHANNEL'
 - Will check environment variables if they are not passed to  the command as flags.
-- SLACK_TOKEN is the slack app's oauth token
-- SLACK_CHANNEL is the slack channel id to send the message in.
+- SLACK_MESSAGE_TOKEN is the slack app's oauth token
+- SLACK_MESSAGE_CHANNEL is the slack channel id to send the message in.
 2. Run `just install`
 
 ### .env
 ```
-SLACK_TOKEN=xoxb-...
-SLACK_CHANNEL=<CHANNELID | CHANNEL_NAME>
+SLACK_MESSAGE_TOKEN=xoxb-...
+SLACK_MESSAGE_CHANNEL=<CHANNELID | CHANNEL_NAME>
 ```
 
 ## TODOS
