@@ -13,7 +13,7 @@ mod tests {
     let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
     let msg = format!("integration test message {now:?}");
     let assert = cmd.arg(msg).arg("--icon").arg(TEST_ICON).assert();
-    assert.success().stdout("Message sent successfully\n");
+    assert.success().stdout("Message sent\n");
   }
 
   #[test]
@@ -29,7 +29,7 @@ mod tests {
       .arg("--icon")
       .arg(TEST_ICON)
       .assert();
-    assert.success().stdout("Message sent successfully\n");
+    assert.success().stdout("Message sent\n");
   }
 
   #[test]

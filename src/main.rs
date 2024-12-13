@@ -22,10 +22,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let slack = Client::new(&bearer_token);
   let res = slack.send_message(&msg).await?;
   if res.ok {
-    println!("Message sent successfully");
+    println!("Message sent");
   } else {
     eprintln!("{res:#?}");
-    panic!("Error: Message not sent successfully");
+    panic!("Error: Message not sent");
   };
   Ok(())
 }
