@@ -1,5 +1,6 @@
 mod cli;
 mod slack;
+mod config;
 
 use crate::cli::Cli;
 use crate::slack::{Client, Message};
