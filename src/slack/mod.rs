@@ -8,11 +8,11 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Message {
-  pub channel: String,
-  pub icon_emoji: Option<String>,
-  pub text: String,
-  pub username: Option<String>,
+pub struct Message<'a> {
+  pub channel: &'a str,
+  pub icon_emoji: Option<&'a str>,
+  pub text: &'a str,
+  pub username: Option<&'a str>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd)]
@@ -29,7 +29,7 @@ impl Client<'_> {
   }
 
   pub async fn send_message(
-    &self, message: &Message,
+    &self, message: &Message<'_>,
   ) -> Result<Response, Box<dyn Error>> {
     let request = self.build_request(message)?;
     let http = reqwest::Client::new();
@@ -88,9 +88,9 @@ mod tests {
   fn build_request_method() -> Result<(), Box<dyn Error>> {
     let client = Client::new("testToken");
     let msg = Message {
-      channel: String::from("testChannel"),
+      channel: "testChannel",
       icon_emoji: None,
-      text: String::from("testMessageText"),
+      text: "testMessageText",
       username: None,
     };
     let actual = client.build_request(&msg)?;
@@ -103,9 +103,9 @@ mod tests {
     let tok = "testToken";
     let client = Client::new(tok);
     let msg = Message {
-      channel: String::from("testChannel"),
+      channel: "testChannel",
       icon_emoji: None,
-      text: String::from("testMessageText"),
+      text: "testMessageText",
       username: None,
     };
     let req = client.build_request(&msg)?;
@@ -129,10 +129,10 @@ mod tests {
   fn build_request_body() -> Result<(), Box<dyn Error>> {
     let client = Client::new("testToken");
     let msg = Message {
-      channel: String::from("testChannel"),
-      icon_emoji: Some(String::from(":test:")),
-      text: String::from("testMessageText"),
-      username: Some(String::from("testName")),
+      channel: "testChannel",
+      icon_emoji: Some(":test:"),
+      text: "testMessageText",
+      username: Some("testName"),
     };
     let req = client.build_request(&msg)?;
     let body = req.body().unwrap().as_bytes().unwrap();
@@ -147,13 +147,13 @@ mod tests {
   async fn send_message() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
     let tok = env::var("SLACK_MESSAGE_TOKEN")?;
-    let channel = env::var("SLACK_MESSAGE_CHANNEL")?;
+    let channel = &env::var("SLACK_MESSAGE_CHANNEL")?;
     let slack = Client::new(&tok);
     let msg = Message {
       channel,
-      icon_emoji: Some(String::from(":test:")),
-      text: String::from("testMessageText"),
-      username: Some(String::from("TEST-NAME")),
+      icon_emoji: Some(":test:"),
+      text: "testMessageText",
+      username: Some("TEST-NAME"),
     };
     slack.send_message(&msg).await?;
     Ok(())

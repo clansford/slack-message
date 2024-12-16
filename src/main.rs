@@ -12,14 +12,14 @@ use std::error::Error;
 async fn main() -> Result<(), Box<dyn Error>> {
   dotenv().ok();
   let args = Cli::parse();
-  let bearer_token = args.get_oauth_token()?;
+  let token = args.get_oauth_token()?;
   let msg = Message {
-    channel: args.get_channel()?,
-    icon_emoji: args.icon,
-    text: args.message,
-    username: args.username,
+    channel: &args.get_channel()?,
+    icon_emoji: args.icon.as_deref(),
+    text: &args.message,
+    username: args.username.as_deref(),
   };
-  let slack = Client::new(&bearer_token);
+  let slack = Client::new(&token);
   let res = slack.send_message(&msg).await?;
   if res.ok {
     println!("Message sent");
