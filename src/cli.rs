@@ -1,6 +1,11 @@
+use crate::globals::{ENV_SLACK_CHANNEL, ENV_SLACK_TOKEN};
+use clap::Command;
 use clap::Parser;
+use clap_complete::aot::Shell;
+use clap_complete::aot::{generate, Generator};
 use env::VarError;
 use std::env;
+use std::io;
 
 #[derive(Parser, Debug, Default)]
 pub struct Cli {
@@ -8,6 +13,8 @@ pub struct Cli {
   auth_token: Option<String>,
   #[arg(short, long)]
   pub channel: Option<String>,
+  #[arg(long)]
+  pub completion: Option<Shell>,
   #[arg(short, long)]
   pub icon: Option<String>,
   pub message: String,
@@ -17,12 +24,16 @@ pub struct Cli {
 
 impl Cli {
   pub fn get_channel(&self) -> Result<String, VarError> {
-    find_arg_or_env(self.channel.as_ref(), "SLACK_MESSAGE_CHANNEL")
+    find_arg_or_env(self.channel.as_ref(), ENV_SLACK_CHANNEL)
   }
 
   pub fn get_oauth_token(&self) -> Result<String, VarError> {
-    find_arg_or_env(self.auth_token.as_ref(), "SLACK_MESSAGE_TOKEN")
+    find_arg_or_env(self.auth_token.as_ref(), ENV_SLACK_TOKEN)
   }
+}
+
+pub fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
+  generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
 /// search precedence: provided arg, env var, config.toml
@@ -64,21 +75,21 @@ mod tests {
   #[serial]
   fn get_oauth_token_env() -> Result<(), Box<dyn Error>> {
     let cli = Cli { ..Default::default() };
-    let slack_token = "SLACK_MESSAGE_TOKEN";
     let expected = String::from("testEnvToken");
-    env::set_var(slack_token, expected.clone());
+    env::set_var(ENV_SLACK_TOKEN, expected.clone());
     let actual = cli.get_oauth_token()?;
     assert_eq!(
       expected, actual,
       "\n  expected: {expected}\n  actual: {actual}"
     );
-    env::remove_var(slack_token);
+    env::remove_var(ENV_SLACK_TOKEN);
     Ok(())
   }
 
   #[test]
   #[serial]
   fn get_oauth_token_fail() -> Result<(), Box<dyn Error>> {
+    env::remove_var(ENV_SLACK_TOKEN);
     let cli = Cli { ..Default::default() };
     let actual = match cli.get_oauth_token() {
       Ok(_) => {
@@ -113,21 +124,21 @@ mod tests {
   #[serial]
   fn get_channel_env() -> Result<(), Box<dyn Error>> {
     let cli = Cli { ..Default::default() };
-    let slack_channel = "SLACK_MESSAGE_CHANNEL";
     let expected = String::from("testEnvChannel");
-    env::set_var(slack_channel, expected.clone());
+    env::set_var(ENV_SLACK_CHANNEL, expected.clone());
     let actual = cli.get_channel()?;
     assert_eq!(
       expected, actual,
       "\n  expected: {expected}\n  actual: {actual}"
     );
-    env::remove_var(slack_channel);
+    env::remove_var(ENV_SLACK_CHANNEL);
     Ok(())
   }
 
   #[test]
   #[serial]
   fn get_channel_fail() -> Result<(), Box<dyn Error>> {
+    env::remove_var(ENV_SLACK_CHANNEL);
     let cli = Cli { ..Default::default() };
     let actual = match cli.get_channel() {
       Ok(_) => {

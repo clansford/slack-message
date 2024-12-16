@@ -65,6 +65,7 @@ fn create_request_body(slack_message: &Message) -> serde_json::Value {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use crate::globals::{ENV_SLACK_CHANNEL, ENV_SLACK_TOKEN};
   use core::str;
   use dotenv::dotenv;
   use std::env;
@@ -146,8 +147,8 @@ mod tests {
   #[ignore = "Actually sends slack message"]
   async fn send_message() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
-    let tok = env::var("SLACK_MESSAGE_TOKEN")?;
-    let channel = &env::var("SLACK_MESSAGE_CHANNEL")?;
+    let tok = env::var(ENV_SLACK_TOKEN)?;
+    let channel = &env::var(ENV_SLACK_CHANNEL)?;
     let slack = Client::new(&tok);
     let msg = Message {
       channel,

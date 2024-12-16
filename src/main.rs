@@ -1,9 +1,10 @@
+mod globals;
 mod cli;
 mod slack;
 
 use crate::cli::Cli;
 use crate::slack::{Client, Message};
-use clap::Parser;
+use clap::{CommandFactory, Parser};
 use core::panic;
 use dotenv::dotenv;
 use std::error::Error;
@@ -12,6 +13,11 @@ use std::error::Error;
 async fn main() -> Result<(), Box<dyn Error>> {
   dotenv().ok();
   let args = Cli::parse();
+  if let Some(shell) = args.completion {
+    cli::print_completions(shell, &mut Cli::command());
+    return Ok(());
+  };
+
   let token = args.get_oauth_token()?;
   let msg = Message {
     channel: &args.get_channel()?,

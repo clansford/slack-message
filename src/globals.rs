@@ -1,0 +1,2 @@
+pub const ENV_SLACK_TOKEN: &str = "SLACK_MESSAGE_TOKEN";
+pub const ENV_SLACK_CHANNEL: &str = "SLACK_MESSAGE_CHANNEL";
