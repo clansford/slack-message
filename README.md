@@ -38,4 +38,3 @@ SLACK_MESSAGE_CHANNEL=<CHANNELID | CHANNEL_NAME>
 
 ## TODOS
 - tests
-- add name flag to change name of bot app.
