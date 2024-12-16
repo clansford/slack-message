@@ -1,8 +1,9 @@
 pub mod response;
 
-use core::panic;
-use reqwest::header;
-use reqwest::{Client as HttpClient, Request};
+use reqwest::{
+  header::{AUTHORIZATION, CONTENT_TYPE},
+  Client as HttpClient, Request,
+};
 use response::Response;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -23,42 +24,33 @@ pub struct Client<'a> {
 
 impl Client<'_> {
   pub fn new(oauth_tok: &str) -> Self {
-    let url = "https://slack.com/api/chat.postMessage";
-    let bearer_token = format!("Bearer {oauth_tok}");
-    Client { bearer_token, url }
+    Client {
+      bearer_token: format!("Bearer {oauth_tok}"),
+      url: "https://slack.com/api/chat.postMessage",
+    }
   }
 
   pub async fn send_message(
     &self, message: &Message<'_>,
   ) -> Result<Response, Box<dyn Error>> {
     let request = self.build_request(message)?;
-    let http = reqwest::Client::new();
-    let response = http.execute(request).await?;
+    let response = HttpClient::new().execute(request).await?;
     let body = response.text().await?;
-    Ok(Response::parse(&body)?)
+    let response = Response::parse(&body)?;
+    Ok(response)
   }
 
   fn build_request(
     &self, message: &Message,
-  ) -> Result<Request, reqwest::Error> {
-    let body = create_request_body(message);
-    HttpClient::new()
+  ) -> Result<Request, Box<dyn Error>> {
+    let body = serde_json::to_value(message)?;
+    let req = HttpClient::new()
       .post(self.url)
-      .header(header::AUTHORIZATION, self.bearer_token.clone())
-      .header(header::CONTENT_TYPE, "application/json; charset=utf-8")
+      .header(AUTHORIZATION, self.bearer_token.clone())
+      .header(CONTENT_TYPE, "application/json; charset=utf-8")
       .json(&body)
-      .build()
-  }
-}
-
-fn create_request_body(slack_message: &Message) -> serde_json::Value {
-  let val = serde_json::to_value(slack_message);
-  match val {
-    Ok(v) => v,
-    Err(e) => {
-      eprintln!("Error creating serde value for message.");
-      panic!("{e}");
-    }
+      .build()?;
+    Ok(req)
   }
 }
 
