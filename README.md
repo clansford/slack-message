@@ -8,6 +8,7 @@ Send a slack message from command line.
 
 ## Build, Test, Install
 - Integration tests are ignored because they utilize an actual slack workspace.
+- Tests that utilize mocks are suffixed with "mock".
 #### With [Just](https://github.com/casey/just)
 ```shell
 just build
@@ -37,4 +38,5 @@ SLACK_MESSAGE_CHANNEL=<CHANNELID | CHANNEL_NAME>
 ```
 
 ## TODOS
-- tests
+- tests, flesh out mocking tests to enhance non-integration testing.
+- improve error handling.
