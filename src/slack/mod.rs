@@ -1,5 +1,6 @@
 pub mod response;
 
+use crate::globals::POST_MES_URL;
 use reqwest::{
   header::{AUTHORIZATION, CONTENT_TYPE},
   Client as HttpClient, Request,
@@ -26,7 +27,7 @@ impl Client<'_> {
   pub fn new(oauth_tok: &str) -> Self {
     Client {
       bearer_token: format!("Bearer {oauth_tok}"),
-      url: "https://slack.com/api/chat.postMessage",
+      url: POST_MES_URL,
     }
   }
 
@@ -69,7 +70,7 @@ mod tests {
     let auth_tok = "testToken";
     let actual = Client::new(auth_tok);
     let expected = Client {
-      url: "https://slack.com/api/chat.postMessage",
+      url: POST_MES_URL,
       bearer_token: format!("Bearer {auth_tok}"),
     };
     assert_eq!(
