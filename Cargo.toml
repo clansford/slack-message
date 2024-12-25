@@ -16,8 +16,13 @@ clap_complete = "4.5.40"
 dotenv = "0.15.0"
 reqwest = { version = "0.12.9", features = ["json"] }
 serde = { version = "1.0.216", features = ["derive"] }
-serde_json = "1.0.133"
+serde_json = "1.0.134"
 tokio = { version = "1.42.0", features = ["full"] }
+
+[dev-dependencies]
+assert_cmd = "2.0.16"
+serial_test = "3.2.0"
+wiremock = "0.6.2"
 
 [lints.rust]
 unsafe_code = "forbid"
@@ -50,8 +55,3 @@ redundant_pub_crate = "warn"
 redundant_type_annotations = "warn"
 semicolon_if_nothing_returned = "warn"
 useless_let_if_seq = "warn"
-
-[dev-dependencies]
-assert_cmd = "2.0.16"
-serial_test = "3.2.0"
-wiremock = "0.6.2"

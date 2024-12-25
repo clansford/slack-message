@@ -7,12 +7,15 @@ build release=release:
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
         cargo build --workspace --release;
+        cargo test --workspace --no-run --release;
     else
         cargo build --workspace;
+        cargo test --workspace --no-run;
     fi
 
 test release=release: (build release)
     #!/usr/bin/env bash
+    set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
         cargo test --workspace --release;
     else
@@ -21,6 +24,7 @@ test release=release: (build release)
 
 test_integration release=release: (build release)
     #!/usr/bin/env bash
+    set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
         cargo test --workspace --release -- --include-ignored ;
     else
