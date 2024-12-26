@@ -25,16 +25,21 @@ pub struct Client<'a> {
 
 impl Client<'_> {
   pub fn new(oauth_tok: &str) -> Self {
-    Client {
-      bearer_token: format!("Bearer {oauth_tok}"),
-      url: POST_MES_URL,
-    }
+    Client { bearer_token: format!("Bearer {oauth_tok}"), url: POST_MES_URL }
   }
 
   pub async fn send_message(
     &self, message: &Message<'_>,
   ) -> Result<Response, Box<dyn Error>> {
     let request = self.build_request(message)?;
+    assert_eq!(
+      request.headers().get("authorization").unwrap(),
+      &self.bearer_token,
+    );
+    assert_eq!(
+      request.headers().get("content-type").unwrap(),
+      "application/json; charset=utf-8"
+    );
     let response = HttpClient::new().execute(request).await?;
     let body = response.text().await?;
     let response = Response::parse(&body)?;
@@ -69,10 +74,8 @@ mod tests {
   fn new() -> Result<(), Box<dyn Error>> {
     let auth_tok = "testToken";
     let actual = Client::new(auth_tok);
-    let expected = Client {
-      url: POST_MES_URL,
-      bearer_token: format!("Bearer {auth_tok}"),
-    };
+    let expected =
+      Client { url: POST_MES_URL, bearer_token: format!("Bearer {auth_tok}") };
     assert_eq!(
       expected, actual,
       "\n  expected: {expected:#?}\n  actual: {actual:#?}"

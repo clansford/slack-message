@@ -1,5 +1,5 @@
-mod globals;
 mod cli;
+mod globals;
 mod slack;
 
 use crate::cli::Cli;
