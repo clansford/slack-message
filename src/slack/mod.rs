@@ -35,15 +35,16 @@ impl Client<'_> {
     assert_eq!(
       request.headers().get("authorization").unwrap(),
       &self.bearer_token,
+      "Request authorization header does not match bearer token."
     );
     assert_eq!(
       request.headers().get("content-type").unwrap(),
-      "application/json; charset=utf-8"
+      "application/json; charset=utf-8",
+      "Request header 'content-type' is not 'application/json; charset=utf-8'."
     );
     let response = HttpClient::new().execute(request).await?;
-    let body = response.text().await?;
-    let response = Response::parse(&body)?;
-    Ok(response)
+    let res = Response::parse(response).await?;
+    Ok(res)
   }
 
   fn build_request(

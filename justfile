@@ -17,18 +17,18 @@ test release=release: (build release)
     #!/usr/bin/env bash
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
-        cargo test --workspace --release;
+        cargo pretty-test --workspace --release;
     else
-        cargo test --workspace;
+        cargo pretty-test --workspace;
     fi
 
 test_integration release=release: (build release)
     #!/usr/bin/env bash
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
-        cargo test --workspace --release -- --include-ignored ;
+        cargo pretty-test --workspace --release -- --include-ignored ;
     else
-        cargo test --workspace -- --include-ignored ;
+        cargo pretty-test --workspace -- --include-ignored ;
     fi
 
 install: (test_integration release)

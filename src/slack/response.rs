@@ -1,4 +1,6 @@
+use reqwest::Response as HttpResponse;
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Response {
@@ -10,8 +12,12 @@ pub struct Response {
 }
 
 impl Response {
-  pub fn parse(s: &str) -> Result<Self, serde_json::Error> {
+  pub fn parse_str(s: &str) -> Result<Self, serde_json::Error> {
     serde_json::from_str(s)
+  }
+  pub async fn parse(res: HttpResponse) -> Result<Self, Box<dyn Error>> {
+    let body = res.text().await?;
+    Ok(Self::parse_str(&body)?)
   }
 }
 
