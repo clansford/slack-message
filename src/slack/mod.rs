@@ -9,7 +9,7 @@ use response::Response;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Message<'a> {
   pub channel: &'a str,
   pub icon_emoji: Option<&'a str>,
@@ -17,7 +17,7 @@ pub struct Message<'a> {
   pub username: Option<&'a str>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd, Clone)]
 pub struct Client<'a> {
   bearer_token: String,
   url: &'a str,
@@ -53,7 +53,7 @@ impl Client<'_> {
     let body = serde_json::to_value(message)?;
     let req = HttpClient::new()
       .post(self.url)
-      .header(AUTHORIZATION, self.bearer_token.clone())
+      .header(AUTHORIZATION, &self.bearer_token)
       .header(CONTENT_TYPE, "application/json; charset=utf-8")
       .json(&body)
       .build()?;
