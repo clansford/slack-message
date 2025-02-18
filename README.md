@@ -28,23 +28,15 @@ just install
 cargo build --workspace
 cargo test --workspace
 cargo test --workspace -- --include-ignored
-    cargo install --path .
+cargo install --path .
 ```
 
 ## Setup
 
 1. Create environment variable 'SLACK_MESSAGE_TOKEN' and 'SLACK_MESSAGE_CHANNEL'
-
-- Will check environment variables if they are not passed to  the command as flags.
-- SLACK_MESSAGE_TOKEN is the slack app's OAuth token
-- SLACK_MESSAGE_CHANNEL is the slack channel id to send the message in.
-
-### .env
-
-```.env
-SLACK_MESSAGE_TOKEN=xoxb-...
-SLACK_MESSAGE_CHANNEL=<CHANNELID | CHANNEL_NAME>
-```
+    - SLACK_MESSAGE_TOKEN is the slack app's OAuth token
+    - SLACK_MESSAGE_CHANNEL is the slack channel id to send the message in.
+1. (Note) supports .env file for development.
 
 ## TODOS
 
