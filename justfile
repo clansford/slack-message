@@ -42,3 +42,9 @@ format:
 
 clippy:
     cargo clippy -- -W clippy::pedantic
+
+audit:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    cargo audit --deny unsound --deny yanked --deny unmaintained || cargo-audit --deny unsound --deny yanked --deny unmaintained
+
