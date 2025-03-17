@@ -6,7 +6,7 @@ use crate::cli::Cli;
 use crate::slack::{Client, Message};
 use clap::{CommandFactory, Parser};
 use core::panic;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::error::Error;
 
 #[tokio::main]

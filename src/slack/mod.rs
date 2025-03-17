@@ -66,7 +66,7 @@ mod tests {
   use super::*;
   use crate::globals::{ENV_SLACK_CHANNEL, ENV_SLACK_TOKEN};
   use core::str;
-  use dotenv::dotenv;
+  use dotenvy::dotenv;
   use std::env;
   use wiremock::matchers::{body_json, method, path};
   use wiremock::{Mock, MockServer, ResponseTemplate};
