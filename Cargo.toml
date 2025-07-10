@@ -11,20 +11,20 @@ lto = true
 debug = 0
 
 [dependencies]
-clap = { version = "4.5.32", features = ["derive"] }
-clap_complete = "4.5.46"
+clap = { version = "4.5.41", features = ["derive"] }
+clap_complete = "4.5.55"
 dotenvy = "0.15.7"
 # For cross compilation
-openssl = { version = "0.10.71", features = ["vendored"] }
-reqwest = { version = "0.12.14", features = ["json"] }
+openssl = { version = "0.10.73", features = ["vendored"] }
+reqwest = { version = "0.12.22", features = ["json"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
-tokio = { version = "1.44.1", features = ["full"] }
+tokio = { version = "1.46.1", features = ["full"] }
 
 [dev-dependencies]
-assert_cmd = "2.0.16"
+assert_cmd = "2.0.17"
 serial_test = "3.2.0"
-wiremock = "0.6.3"
+wiremock = "0.6.4"
 
 [lints.rust]
 unsafe_code = "forbid"

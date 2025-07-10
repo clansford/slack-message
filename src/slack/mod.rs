@@ -50,12 +50,11 @@ impl Client<'_> {
   fn build_request(
     &self, message: &Message,
   ) -> Result<Request, Box<dyn Error>> {
-    let body = serde_json::to_value(message)?;
     let req = HttpClient::new()
       .post(self.url)
       .header(AUTHORIZATION, &self.bearer_token)
       .header(CONTENT_TYPE, "application/json; charset=utf-8")
-      .json(&body)
+      .json(&message)
       .build()?;
     Ok(req)
   }
