@@ -37,8 +37,3 @@ cargo install --path .
     - SLACK_MESSAGE_TOKEN is the slack app's OAuth token
     - SLACK_MESSAGE_CHANNEL is the slack channel id to send the message in.
 1. (Note) supports .env file for development.
-
-## TODOS
-
-- tests, flesh out mocking tests to enhance non-integration testing.
-- improve error handling.
