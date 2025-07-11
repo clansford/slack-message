@@ -1,0 +1,19 @@
+name: "Publish release"
+on:
+  workflow_dispatch:
+  push:
+    tags: [ 'v*.*.*' ]
+
+env:
+  RUST_BACKTRACE: full
+  RUSTFLAGS: -D warnings
+
+jobs:
+  publish:
+    name: Publish Release
+    runs-on: [ubuntu-latest]
+    steps:
+
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+
