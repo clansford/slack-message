@@ -12,17 +12,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup just
-        uses: extractions/setup-just@v3
+      # - name: Setup just
+      #   uses: extractions/setup-just@v3
       - name: Install tools
         run: sudo apt-get install --yes --no-install-recommends musl-tools
       - name: Install rustup targets
         run: rustup target add x86_64-unknown-linux-musl aarch64-unknown-linux-gnu
+      - name: Install cross
+        run: |
+          curl -Lo cross-x86_64-unknown-linux-gnu.tar.gz https://github.com/cross-rs/cross/releases/download/v0.2.5/cross-x86_64-unknown-linux-gnu.tar.gz
+          sudo tar xvzf cross-x86_64-unknown-linux-gnu.tar.gz
+          mv cross /usr/local/bin/cross
+          mv cross-util /usr/local/bin/cross-util
+
 
       - name: Build
         run: |
-          just build release x86_64-unknown-linux-musl
-          just build release aarch64-unknown-linux-gnu
+          cross build release --target x86_64-unknown-linux-musl
+          cross build release --target aarch64-unknown-linux-gnu
 
       - name: Tar binary
         run: |
