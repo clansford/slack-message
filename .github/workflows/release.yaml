@@ -17,7 +17,7 @@ jobs:
       - name: Install rustup targets
         run: rustup target add x86_64-unknown-linux-musl
 
-      - name: Build the executable
+      - name: Build
         run: cargo build --release --target x86_64-unknown-linux-musl
 
       - name: Tar x86_64 binary
@@ -28,8 +28,8 @@ jobs:
         run: |
           shasum -a 256 slack-message-gnu-linux-x86_64.tar.gz > slack-message-gnu-linux-x86_64.tar.gz.sha256
 
-      # - name: Upload artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: build-${{ matrix.target }}
-      #     path: target/${{ matrix.target }}/release/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: slack-message-gnu-linux-x86_64.tar.gz
+          path: slack-message-gnu-linux-x86_64.tar.gz
