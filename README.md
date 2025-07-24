@@ -2,6 +2,17 @@
 
 Send a slack message from command line.
 
+## Usage
+
+- Value priority:
+    1. provided arg
+    1. env var
+
+```shell
+slack-message --channel <SLACK_MESSAGE_CHANNEL> --auth-token <SLACK_MESSAGE_TOKEN> 'message body'
+slack-message 'message body' (if channel and token are setup in env)
+```
+
 ## External requirements
 
 - Slack app and bot token.
