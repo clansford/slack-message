@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup just
+        uses: extractions/setup-just@v3
       - name: Install tools
         run: sudo apt-get install --yes --no-install-recommends musl-tools
       - name: Install rustup targets
