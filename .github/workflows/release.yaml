@@ -1,4 +1,4 @@
-name: Rust Cross-Platform CI
+name: Release
 
 on:
   push:
@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Install tools
         run: sudo apt-get install --yes --no-install-recommends musl-tools
 
@@ -28,8 +29,14 @@ jobs:
         run: |
           shasum -a 256 slack-message-gnu-linux-x86_64.tar.gz > slack-message-gnu-linux-x86_64.tar.gz.sha256
 
-      - name: Upload artifact
+      - name: Upload gnu-linux-x86_64 Artifact
         uses: actions/upload-artifact@v4
         with:
           name: slack-message-gnu-linux-x86_64.tar.gz
           path: slack-message-gnu-linux-x86_64.tar.gz
+
+      - name: Upload gnu-linux-x86_64 Artifact SHA
+        uses: actions/upload-artifact@v4
+        with:
+          name: slack-message-gnu-linux-x86_64.tar.gz.sha256
+          path: slack-message-gnu-linux-x86_64.tar.gz.sha256
