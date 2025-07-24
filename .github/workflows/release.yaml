@@ -22,18 +22,18 @@ jobs:
         run: just build release x86_64-unknown-linux-musl
 
       - name: Tar x86_64 binary
-        run: tar -czvf slack-message-gnu-linux-x86_64.tar.gz -C target/x86_64-unknown-linux-musl/release slack-message
+        run: tar -czvf slack-message-x86_64-unknown-linux-musl.tar.gz -C target/x86_64-unknown-linux-musl/release slack-message
       - name: Generate SHA256 checksums
         run: |
-          shasum -a 256 slack-message-gnu-linux-x86_64.tar.gz > slack-message-gnu-linux-x86_64.tar.gz.sha256
+          shasum -a 256 slack-message-x86_64-unknown-linux-musl.tar.gz > slack-message-gnu-linux-x86_64.tar.gz.sha256
 
-      - name: Upload gnu-linux-x86_64 Artifact
+      - name: Upload x86_64-unknown-linux-musl Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: slack-message-gnu-linux-x86_64.tar.gz
-          path: slack-message-gnu-linux-x86_64.tar.gz
-      - name: Upload gnu-linux-x86_64 Artifact SHA
+          name: slack-message-x86_64-unknown-linux-musl.tar.gz
+          path: slack-message-x86_64-unknown-linux-musl.tar.gz
+      - name: Upload x86_64-unknown-linux-musl Artifact SHA
         uses: actions/upload-artifact@v4
         with:
-          name: slack-message-gnu-linux-x86_64.tar.gz.sha256
-          path: slack-message-gnu-linux-x86_64.tar.gz.sha256
+          name: slack-message-x86_64-unknown-linux-musl.tar.gz.sha256
+          path: slack-message-x86_64-unknown-linux-musl.tar.gz.sha256
