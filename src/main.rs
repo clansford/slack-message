@@ -23,12 +23,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     channel: &args.get_channel()?,
     icon_emoji: args.icon.as_deref(),
     text: &args.message,
+    thread_ts: args.timestamp.as_deref(),
     username: args.username.as_deref(),
   };
   let slack = Client::new(&token);
   let res = slack.send_message(&msg).await?;
   if res.ok {
-    println!("Message sent");
+    println!("Message sent, timestamp: {}", res.ts);
   } else {
     eprintln!("{res:#?}");
     panic!("Error: Message not sent");

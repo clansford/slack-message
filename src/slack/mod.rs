@@ -14,6 +14,7 @@ pub struct Message<'a> {
   pub channel: &'a str,
   pub icon_emoji: Option<&'a str>,
   pub text: &'a str,
+  pub thread_ts: Option<&'a str>,
   pub username: Option<&'a str>,
 }
 
@@ -90,6 +91,7 @@ mod tests {
       channel: "testChannel",
       icon_emoji: None,
       text: "testMessageText",
+      thread_ts: None,
       username: None,
     };
     let actual = client.build_request(&msg)?;
@@ -105,6 +107,7 @@ mod tests {
       channel: "testChannel",
       icon_emoji: None,
       text: "testMessageText",
+      thread_ts: None,
       username: None,
     };
     let req = client.build_request(&msg)?;
@@ -127,16 +130,18 @@ mod tests {
   #[test]
   fn build_request_body() -> Result<(), Box<dyn Error>> {
     let client = Client::new("testToken");
+    let ts = "1734376519.228539";
     let msg = Message {
       channel: "testChannel",
       icon_emoji: Some(":test:"),
       text: "testMessageText",
+      thread_ts: Some(ts),
       username: Some("testName"),
     };
     let req = client.build_request(&msg)?;
     let body = req.body().unwrap().as_bytes().unwrap();
     let actual = str::from_utf8(body)?;
-    let expected = r#"{"channel":"testChannel","icon_emoji":":test:","text":"testMessageText","username":"testName"}"#;
+    let expected = r#"{"channel":"testChannel","icon_emoji":":test:","text":"testMessageText","thread_ts":"1734376519.228539","username":"testName"}"#;
     assert_eq!(expected, actual, "\nexpected: {expected}\nactual:{actual}");
     Ok(())
   }
@@ -149,7 +154,8 @@ mod tests {
     let text = "testMessageText";
     let username = Some("TEST-USERNAME");
     let route = "/api/chat.postMessage";
-    let msg = Message { channel, icon_emoji, text, username };
+    let msg =
+      Message { channel, icon_emoji, text, thread_ts: Some(ts), username };
     let mock_server = setup_mock_server(&msg, route, ts).await?;
     let client = Client {
       bearer_token: String::from("test-token"),
@@ -172,9 +178,10 @@ mod tests {
     let channel = &env::var(ENV_SLACK_CHANNEL)?;
     let slack = Client::new(&tok);
     let text = "testMessageText";
+    let thread_ts = None;
     let username = Some("TEST-NAME");
     let icon_emoji = Some(":test:");
-    let msg = Message { channel, icon_emoji, text, username };
+    let msg = Message { channel, icon_emoji, text, thread_ts, username };
     let actual = slack.send_message(&msg).await?;
     println!("actual:\n{actual:?}");
     assert!(actual.ok);

@@ -25,6 +25,8 @@ pub struct Cli {
   #[arg(short, long)]
   pub icon: Option<String>,
   pub message: String,
+  #[arg(short, long, help="Timestamp of message for which to reply. ex) '1734376519.228539'")]
+  pub timestamp: Option<String>,
   #[arg(short, long)]
   pub username: Option<String>,
 }
