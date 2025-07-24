@@ -19,11 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: stable
-          target: ${{ matrix.target }}
+      # - name: Set up Rust
+      #   uses: actions/setup-rust@v1
+      #   with:
+      #     rust-version: stable
+      #     target: ${{ matrix.target }}
 
       - name: Install dependencies for musl
         if: matrix.target == 'x86_64-unknown-linux-musl'
