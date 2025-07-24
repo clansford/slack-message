@@ -1,34 +1,43 @@
 release := '\ '
+target := shell("rustc -vV | sed -n 's|host: ||p'")
+var_one := '\ '
 
 default: test
 
-build release=release:
+hello var_one=var_one target=target:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    echo {{var_one}}
+    echo {{target}}
+
+
+build release=release target=target:
     #!/usr/bin/env bash
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
-        cargo build --workspace --release;
-        cargo test --workspace --no-run --release;
+        cargo build --workspace --release --target {{target}};
+        cargo test --workspace --no-run --release --target {{target}};
     else
-        cargo build --workspace;
-        cargo test --workspace --no-run;
+        cargo build --workspace --target {{target}};
+        cargo test --workspace --no-run --target {{target}};
     fi
 
-test release=release: (build release)
+test release=release target=target: (build release target)
     #!/usr/bin/env bash
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
-        cargo pretty-test --workspace --release;
+        cargo pretty-test --workspace --release --target {{target}};
     else
-        cargo pretty-test --workspace;
+        cargo pretty-test --workspace --target {{target}};
     fi
 
-test_integration release=release: (build release)
+test_integration release=release target=target: (build release)
     #!/usr/bin/env bash
     set -euxo pipefail
     if [[ {{release}} == "release" ]]; then
-        cargo pretty-test --workspace --release -- --include-ignored ;
+        cargo pretty-test --workspace --release -- --include-ignored  --target {{target}};
     else
-        cargo pretty-test --workspace -- --include-ignored ;
+        cargo pretty-test --workspace -- --include-ignored  --target {{target}};
     fi
 
 install: (test_integration "release")
