@@ -32,19 +32,19 @@ impl Client<'_> {
   pub async fn send_message(
     &self, message: &Message<'_>,
   ) -> Result<Response, Box<dyn Error>> {
-    let request = self.build_request(message)?;
+    let req = self.build_request(message)?;
     assert_eq!(
-      request.headers().get("authorization").unwrap(),
+      req.headers().get("authorization").unwrap(),
       &self.bearer_token,
       "Request authorization header does not match bearer token."
     );
     assert_eq!(
-      request.headers().get("content-type").unwrap(),
+      req.headers().get("content-type").unwrap(),
       "application/json; charset=utf-8",
       "Request header 'content-type' is not 'application/json; charset=utf-8'."
     );
-    let response = HttpClient::new().execute(request).await?;
-    let res = Response::parse(response).await?;
+    let res = HttpClient::new().execute(req).await?;
+    let res = Response::parse(res).await?;
     Ok(res)
   }
 
