@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests {
   use assert_cmd::Command;
+  use assert_cmd::cargo;
   use regex::Regex;
   use std::time::{SystemTime, UNIX_EPOCH};
 
-  const SLACK_MESSAGE: &str = "slack-message";
   const TEST_ICON: &str = ":test:";
 
   fn parse_timestamp(v: Vec<u8>) -> String {
@@ -17,7 +17,7 @@ mod tests {
   #[ignore]
   fn send_message() {
     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-    let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let mut cmd = Command::new(cargo::cargo_bin!("slack-message"));
 
     let msg = format!("integration test message {now:?}");
     let assert = cmd.arg(msg).arg("--icon").arg(TEST_ICON).assert();
@@ -32,7 +32,7 @@ mod tests {
   #[ignore]
   fn send_message_with_username() {
     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-    let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let mut cmd = Command::new(cargo::cargo_bin!("slack-message"));
 
     let msg = format!("integration test message {now:?}");
     let assert = cmd
@@ -53,7 +53,7 @@ mod tests {
   #[ignore]
   fn send_message_as_reply() {
     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-    let mut cmd1 = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let mut cmd1 = Command::new(cargo::cargo_bin!("slack-message"));
     let msg = format!("integration test reply message original {now:?}");
     let assert_cmd1 =
       cmd1.arg(msg).arg("--icon").arg(TEST_ICON).assert().success();
@@ -61,7 +61,7 @@ mod tests {
     let cmd1_ts = parse_timestamp(output_stdout);
 
     let reply_msg = format!("integration test reply message reply {now:?}");
-    let mut cmd2 = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let mut cmd2 = Command::new(cargo::cargo_bin!("slack-message"));
     let assert = cmd2
       .arg(reply_msg)
       .arg("--icon")
@@ -79,7 +79,7 @@ mod tests {
   #[test]
   #[ignore]
   fn no_message_provided() {
-    let mut cmd = Command::cargo_bin(SLACK_MESSAGE).unwrap();
+    let mut cmd = Command::new(cargo::cargo_bin!("slack-message"));
     let assert = cmd.assert();
     let expected_out = "error: the following required arguments were not provided:\n  <MESSAGE>\n\nUsage: slack-message <MESSAGE>\n\nFor more information, try '--help'.\n";
     assert.failure().code(2).stderr(expected_out);
