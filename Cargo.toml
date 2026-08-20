@@ -15,20 +15,20 @@ incremental = false
 codegen-units = 1
 
 [dependencies]
-clap = { version = "4.5.55", features = ["derive"] }
-clap_complete = "4.5.65"
+clap = { version = "4.6.6", features = ["derive"] }
+clap_complete = "4.6.9"
 dotenvy = "0.15.7"
 # For cross compilation
-openssl = { version = "0.10.75", features = ["vendored"] }
-regex = "1.12.2"
-reqwest = { version = "0.13.1", features = ["json"] }
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.149"
-tokio = { version = "1.49.0", features = ["full"] }
+openssl = { version = "0.10.81", features = ["vendored"] }
+regex = "1.13.1"
+reqwest = { version = "0.13.4", features = ["json"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tokio = { version = "1.53.1", features = ["full"] }
 
 [dev-dependencies]
-assert_cmd = "2.1.2"
-serial_test = "3.3.1"
+assert_cmd = "2.2.2"
+serial_test = "3.5.0"
 wiremock = "0.6.5"
 
 [lints.rust]
